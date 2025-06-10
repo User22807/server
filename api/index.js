@@ -1,13 +1,16 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
+const fetch = require('node-fetch');
 
-app.use(cors());
+module.exports = async (req, res) => {
+  try {
+    // Fetch data from the external API
+    const response = await fetch('https://meta-test.rasa.capital/mock-api/markets');
+    const data = await response.json();
 
-app.get('/home', (req, res) => {
-  res.status(200).json('Welcome, your app is working well');
-});
-
-// Export the app as a serverless function for Vercel
-module.exports = app;
-module.exports.handler = require('serverless-http')(app);
+    // Send the fetched data as the response
+    res.status(200).json(data);
+  } catch (error) {
+    // Handle errors
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
+};
